@@ -189,7 +189,8 @@ class _LoginPageState extends State<LoginPage> {
                                         authService.rememberMe = value;
                                       }
                                     },
-                                    activeColor: Theme.of(context).colorScheme.primary, // Updated to dynamic color
+                                    activeColor: Theme.of(context).colorScheme.primary,
+                                    checkColor: Theme.of(context).colorScheme.surface // Updated to dynamic color
                                   ),
                                   Text(
                                     'Remember me',

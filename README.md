@@ -1,123 +1,130 @@
-# SimpanNow
+# SimpanNow - Personal Finance Companion
 
-**SimpanNow** is a personal finance management application built using **Flutter**. It helps users manage their finances by providing features like user authentication, data storage, and analytics. The app is integrated with **Firebase** for backend services and supports both web and mobile platforms.
+## 🚧 Work in Progress 🚧
+
+SimpanNow is currently under active development. The core authentication system and user profile management are functional, but many features are still being implemented.
+
+## Overview
+
+SimpanNow is a personal financial management application designed to help users track their expenses, manage budgets, and improve their financial habits.
 
 ## Features
 
-- **User Authentication**: Secure login and registration using Firebase Authentication.
-- **User Data Management**: Store and retrieve user-specific data using Firestore.
-- **Theming**: Supports light and dark themes.
-- **Cross-Platform**: Works on Android, iOS, and Web.
-- **Responsive UI**: Designed for a seamless user experience across devices.
+### Currently Implemented
+- **User Authentication**
+  - Email/password registration and login
+  - "Remember me" functionality
+  - Password visibility toggle
 
-## Tech Stack
+- **User Profile Management**
+  - Username customization
+  - Profile viewing and editing
 
-- **Frontend**: Flutter
-- **Backend**: Firebase (Authentication, Firestore, Analytics)
-- **State Management**: Provider
-- **UI Libraries**: Font Awesome, FlutterToast, SpinKit
+- **UI/UX**
+  - Responsive design for various screen sizes
+  - Dark mode support with easy toggle
+  - Intuitive navigation with side drawer and bottom tabs
 
-## Getting Started
+### Coming Soon
+- **Transaction Tracking**
+  - Add, edit, and categorize expenses and income
+  - Transaction history and search
+
+- **Budgeting Tools**
+  - Create and manage budgets
+  - Visual budget reports
+
+- **Financial Insights**
+  - Spending patterns analysis
+  - Savings recommendations
+
+## Technologies Used
+
+- **Flutter & Dart** - Cross-platform UI framework
+- **Firebase**
+  - Authentication for user management
+  - Firestore for data storage
+  - Analytics for usage metrics
+- **Provider** - State management
+- **Font Awesome Flutter** - Icon pack integration
+- **Shared Preferences** - Local storage for user settings
+- **Flutter Toast** - User notifications
+
+## Project Structure
+
+```
+lib/
+├── core/
+│   └── services/      # Core services (auth, user, Firebase)
+├── data/
+│   └── models/        # Data models
+└── ui/
+    ├── components/    # Reusable UI components
+    ├── features/      # Feature-specific UI elements
+    ├── screens/       # Main app screens
+    └── app_theme.dart # Theme configuration
+```
+
+## Setup Instructions
 
 ### Prerequisites
+- Flutter SDK (latest stable version)
+- Dart SDK
+- Android Studio / VS Code with Flutter plugins
+- Firebase account
 
-- Install [Flutter](https://flutter.dev/docs/get-started/install).
-- Set up Firebase for your project:
-  - Add your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS) files.
-  - Configure Firebase hosting for web.
+### Firebase Setup
+
+1. Create a new Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
+2. Enable Authentication with Email/Password
+3. Set up Firestore Database
+4. Download the Firebase configuration files:
+   - For Android: `google-services.json` to `android/app/`
+   - For iOS: `GoogleService-Info.plist` to `ios/Runner/`
+5. Create your Firebase service file:
+   - Copy `lib/core/services/firebase_service.example.dart` to `lib/core/services/firebase_service.dart`
+   - Replace the placeholder values in `firebase_service.dart` with your own Firebase project configuration
+   - This file is gitignored to protect your Firebase credentials
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository
    ```bash
-   git clone https://github.com/your-username/simpannow.git
-   cd simpannow
+   git clone https://github.com/yourusername/simpannow.git
    ```
 
-2. Install dependencies:
+2. Install dependencies
    ```bash
    flutter pub get
    ```
 
-3. Run the app:
+3. Configure Firebase (as described above)
+
+4. Run the app
    ```bash
    flutter run
    ```
 
-### Firebase Configuration
+## Firestore Database Structure
 
-Ensure Firebase is properly configured in your project:
-- Update `firebase_options.dart` with your Firebase project details.
-- Modify `firebase.json` for hosting and emulator settings.
-
-### Setup Instructions
-
-1. Copy the `firebase_service.example.dart` file to `firebase_service.dart`:
-   ```bash
-   cp lib/core/services/firebase_service.example.dart lib/core/services/firebase_service.dart
-   ```
-
-2. Replace the placeholder values in `firebase_service.dart` with your Firebase project configuration:
-   - `YOUR_GOOGLE_API_KEY`
-   - `YOUR_AUTH_DOMAIN`
-   - `YOUR_PROJECT_ID`
-   - `YOUR_STORAGE_BUCKET`
-   - `YOUR_MESSAGING_SENDER_ID`
-   - `YOUR_APP_ID`
-   - `YOUR_MEASUREMENT_ID`
-
-3. Ensure `firebase_service.dart` is not committed to the repository by verifying it is listed in `.gitignore`.
-
-4. Run the application as usual:
-   ```bash
-   flutter run
-   ```
-
-### Folder Structure
-
-```
-simpannow/
-├── android/                # Android-specific files
-├── ios/                    # iOS-specific files
-├── lib/                    # Main application code
-│   ├── core/               # Core services (e.g., Auth, Firebase)
-│   ├── ui/                 # UI components and screens
-│   ├── data/               # Data models
-│   ├── features/           # Additional features (e.g., theming)
-├── test/                   # Unit and widget tests
-├── pubspec.yaml            # Flutter dependencies
-├── firebase.json           # Firebase hosting configuration
-└── README.md               # Project documentation
-```
+### Collections
+- `users` - User profile information
+  - Document ID: User UID
+  - Fields:
+    - email (string)
+    - username (string, optional)
+    - createdAt (timestamp)
 
 ## Contributing
 
-Contributions are welcome! Please follow these steps:
-1. Fork the repository.
-2. Create a new branch:
-   ```bash
-   git checkout -b feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add feature-name"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature-name
-   ```
-5. Open a pull request.
+As this project is still in development, contributions are welcome. Please follow these steps:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
-## Contact
-
-For questions or support, please contact:
-- **Email**: your-email@example.com
-- **GitHub**: [your-username](https://github.com/your-username)
-
-## Status
-
-This project is a work in progress. More features and updates are coming soon. Stay tuned!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -45,3 +45,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase service file
+lib/core/services/firebase_service.dart

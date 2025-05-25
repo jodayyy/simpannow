@@ -50,6 +50,29 @@ Ensure Firebase is properly configured in your project:
 - Update `firebase_options.dart` with your Firebase project details.
 - Modify `firebase.json` for hosting and emulator settings.
 
+### Setup Instructions
+
+1. Copy the `firebase_service.example.dart` file to `firebase_service.dart`:
+   ```bash
+   cp lib/core/services/firebase_service.example.dart lib/core/services/firebase_service.dart
+   ```
+
+2. Replace the placeholder values in `firebase_service.dart` with your Firebase project configuration:
+   - `YOUR_GOOGLE_API_KEY`
+   - `YOUR_AUTH_DOMAIN`
+   - `YOUR_PROJECT_ID`
+   - `YOUR_STORAGE_BUCKET`
+   - `YOUR_MESSAGING_SENDER_ID`
+   - `YOUR_APP_ID`
+   - `YOUR_MEASUREMENT_ID`
+
+3. Ensure `firebase_service.dart` is not committed to the repository by verifying it is listed in `.gitignore`.
+
+4. Run the application as usual:
+   ```bash
+   flutter run
+   ```
+
 ### Folder Structure
 
 ```
@@ -94,3 +117,7 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 For questions or support, please contact:
 - **Email**: your-email@example.com
 - **GitHub**: [your-username](https://github.com/your-username)
+
+## Status
+
+This project is a work in progress. More features and updates are coming soon. Stay tuned!

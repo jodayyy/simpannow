@@ -33,45 +33,107 @@ class SideNavigation extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
+                child: ListView(                  padding: EdgeInsets.zero,
                   children: [
-                    UserAccountsDrawerHeader(
+                    // Combined user header and profile navigation
+                    Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                       ),
-                      // Shows user’s display name and profile icon
-                      accountName: Text(
-                        userService.getDisplayName(),
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                      ),
-                      accountEmail: Text(
-                        user?.email ?? '',
-                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                      ),
-                      currentAccountPicture: CircleAvatar(
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        child: Icon(
-                          FontAwesomeIcons.user,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
+                      child: InkWell(
+                        onTap: () {
+                          // Navigate to profile details
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ProfilePage()),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // User avatar and basic info
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Theme.of(context).colorScheme.primary,
+                                    child: Icon(
+                                      FontAwesomeIcons.user,
+                                      color: Theme.of(context).colorScheme.surface,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          userService.getDisplayName(),
+                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                            color: Theme.of(context).colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          user?.email ?? '',
+                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Profile action row
+                              Row(
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.user,
+                                    size: 16,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    'View Profile',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Icon(
+                                    FontAwesomeIcons.chevronRight,
+                                    size: 12,
+                                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),                      ),
                     ),
-                    ListTile(
-                      leading: const Icon(FontAwesomeIcons.user),
-                      title: const Text('Profile'),
-                      onTap: () {
-                        // Navigate to profile details
-                        Navigator.pop(context);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ProfilePage()),
-                        );
-                      },
+                    // Divider after profile section
+                    Divider(
+                      color: Theme.of(context).dividerColor,
+                      height: 1,
+                      thickness: 1,
                     ),
-                    const Divider(),
-                  ],
+                    const SizedBox(height: 8),                  ],
                 ),
+              ),
+              // Divider before bottom section
+              Divider(
+                color: Theme.of(context).dividerColor,
+                height: 1,
+                thickness: 1,
               ),
               // Bottom row with dark mode toggle and logout button
               Padding(

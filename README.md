@@ -1,42 +1,60 @@
 # SimpanNow - Personal Finance Companion
 
-## 🚧 Work in Progress 🚧
-
-SimpanNow is currently under active development. The core authentication system and user profile management are functional, but many features are still being implemented.
+A comprehensive personal financial management application built with Flutter, designed to help users track their expenses, manage income, and build better financial habits.
 
 ## Overview
 
-SimpanNow is a personal financial management application designed to help users track their expenses, manage budgets, and improve their financial habits.
+SimpanNow provides an intuitive platform for managing your personal finances with real-time transaction tracking, financial summaries, and secure cloud synchronization. The app features a modern, responsive design that works seamlessly across web and mobile platforms.
+
+## Screenshots
+
+*Screenshots coming soon - currently focusing on core functionality development*
 
 ## Features
 
-### Currently Implemented
+### Core Functionality
 - **User Authentication**
-  - Email/password registration and login
-  - "Remember me" functionality
-  - Password visibility toggle
+  - Secure email/password registration and login
+  - "Remember me" functionality with persistent sessions
+  - Password visibility toggle for better UX
+  - Comprehensive error handling and user feedback
+
+- **Transaction Management** ✨
+  - Add income and expense transactions with categories
+  - Real-time transaction tracking and history
+  - Interactive transaction list with edit/delete capabilities
+  - Predefined categories with emoji icons (Food 🍕, Transport 🚗, etc.)
+  - Transaction filtering and search functionality
+
+- **Financial Dashboard** ✨
+  - Live financial summary with total balance calculation
+  - Real-time income, expense, and balance tracking
+  - Visual financial overview cards
+  - Automatic balance updates based on transactions
 
 - **User Profile Management**
-  - Username customization
-  - Profile viewing and editing
+  - Customizable username and profile settings
+  - Profile viewing and editing capabilities
+  - Secure user data synchronization with Firebase
 
-- **UI/UX**
-  - Responsive design for various screen sizes
-  - Dark mode support with easy toggle
-  - Intuitive navigation with side drawer and bottom tabs
+- **UI/UX Excellence**
+  - Responsive design optimized for web and mobile
+  - Dark/light mode support with smooth transitions
+  - Intuitive navigation with drawer and tab-based interface
+  - Loading states and error handling throughout the app
+  - Modern Material Design 3 styling
 
-### Coming Soon
-- **Transaction Tracking**
-  - Add, edit, and categorize expenses and income
-  - Transaction history and search
+### Technical Features
+- **Real-time Data Synchronization**
+  - Cloud Firestore integration for instant updates
+  - Offline capability with automatic sync when online
+  - Stream-based UI updates for real-time user experience
 
-- **Budgeting Tools**
-  - Create and manage budgets
-  - Visual budget reports
-
-- **Financial Insights**
-  - Spending patterns analysis
-  - Savings recommendations
+- **Security & Performance**
+  - Firebase Authentication with secure credential management
+  - Firestore security rules for data protection
+  - Optimized state management with Provider pattern
+  - Input validation and sanitization
 
 ## Technologies Used
 
@@ -55,14 +73,29 @@ SimpanNow is a personal financial management application designed to help users 
 ```
 lib/
 ├── core/
-│   └── services/      # Core services (auth, user, Firebase)
+│   ├── services/           # Core business logic services
+│   │   ├── auth_service.dart       # User authentication
+│   │   ├── user_service.dart       # User profile management
+│   │   ├── transaction_service.dart # Transaction CRUD operations
+│   │   ├── theme_service.dart      # Theme management
+│   │   └── firebase_service.dart   # Firebase configuration
+│   └── utils/              # Utility functions and helpers
 ├── data/
-│   └── models/        # Data models
+│   └── models/             # Data models and entities
+│       ├── user_model.dart         # User data structure
+│       ├── transaction_model.dart  # Transaction data structure
+│       └── financial_summary_model.dart # Financial summary calculations
 └── ui/
-    ├── components/    # Reusable UI components
-    ├── features/      # Feature-specific UI elements
-    ├── screens/       # Main app screens
-    └── app_theme.dart # Theme configuration
+    ├── components/         # Reusable UI components
+    │   └── navigation/     # Navigation components
+    ├── features/           # Feature-specific UI elements
+    │   ├── transactions/   # Transaction-related widgets
+    │   └── dark_mode_toggle.dart # Theme switching
+    ├── screens/            # Main application screens
+    │   ├── auth/          # Authentication screens
+    │   ├── home/          # Home dashboard
+    │   └── profile/       # User profile screens
+    └── app_theme.dart     # Global theme configuration
 ```
 
 ## Setup Instructions
@@ -84,7 +117,7 @@ lib/
 5. Create your Firebase service file:
    - Copy `lib/core/services/firebase_service.example.dart` to `lib/core/services/firebase_service.dart`
    - Replace the placeholder values in `firebase_service.dart` with your own Firebase project configuration
-   - This file is gitignored to protect your Firebase credentials
+   - **Important**: This file contains sensitive credentials and is gitignored for security
 
 ### Installation
 
@@ -111,20 +144,75 @@ lib/
 - `users` - User profile information
   - Document ID: User UID
   - Fields:
-    - email (string)
-    - username (string, optional)
-    - createdAt (timestamp)
+    - `email` (string) - User's email address
+    - `username` (string, optional) - Display name
+    - `createdAt` (timestamp) - Account creation date
+
+- `users/{userId}/transactions` - User's financial transactions
+  - Document ID: Auto-generated transaction ID
+  - Fields:
+    - `id` (string) - Transaction identifier
+    - `userId` (string) - Reference to user
+    - `title` (string) - Transaction description
+    - `amount` (number) - Transaction amount
+    - `type` (string) - "INCOME" or "EXPENSE"
+    - `category` (string) - Transaction category
+    - `description` (string, optional) - Additional notes
+    - `createdAt` (timestamp) - Transaction date
+
+### Security Rules
+- Users can only access their own data
+- Authentication required for all operations
+- Transaction data is isolated per user
+
+## Upcoming Features 🚀
+- **Advanced Analytics**
+  - Spending pattern analysis and insights
+  - Monthly/yearly financial reports
+  - Category-wise expense breakdown charts
+
+- **Budgeting Tools**
+  - Budget creation and management
+  - Budget vs actual spending comparisons
+  - Savings goal tracking
+
+- **Enhanced User Experience**
+  - Export transaction data (CSV, PDF)
+  - Recurring transaction templates
+  - Custom category creation
+  - Transaction search and filtering
+  - Notification system for budget alerts
 
 ## Contributing
 
-As this project is still in development, contributions are welcome. Please follow these steps:
+We welcome contributions to SimpanNow! Please follow these guidelines:
 
+### Development Setup
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+3. Follow the existing code style and patterns
+4. Add tests for new functionality when applicable
+5. Commit your changes (`git commit -m 'Add some amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
+
+### Code Style
+- Follow Dart/Flutter best practices
+- Use meaningful variable and function names
+- Add comments for complex logic
+- Maintain consistent formatting
+
+### Security
+- Never commit Firebase configuration files
+- Follow security best practices for user data
+- Validate all user inputs
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ using Flutter & Firebase**
+
+*SimpanNow - Making personal finance management simple and accessible for everyone.*

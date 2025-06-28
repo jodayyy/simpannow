@@ -89,12 +89,12 @@ lib/
     ├── components/         # Reusable UI components
     │   └── navigation/     # Navigation components
     ├── features/           # Feature-specific UI elements
-    │   ├── transactions/   # Transaction-related widgets
-    │   └── dark_mode_toggle.dart # Theme switching    ├── screens/            # Main application screens
-    │   ├── auth/          # Authentication screens
-    │   ├── summary/       # Financial summary dashboard
-    │   └── profile/       # User profile screens
-    └── app_theme.dart     # Global theme configuration
+    │   └── transactions/   # Transaction-related widgets
+    ├── screens/            # Main application screens
+    │   ├── auth/           # Authentication screens
+    │   ├── summary/        # Financial summary dashboard
+    │   └── profile/        # User profile screens
+    └── theme/              # Global theme configuration
 ```
 
 ## Setup Instructions

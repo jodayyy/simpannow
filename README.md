@@ -90,10 +90,9 @@ lib/
     │   └── navigation/     # Navigation components
     ├── features/           # Feature-specific UI elements
     │   ├── transactions/   # Transaction-related widgets
-    │   └── dark_mode_toggle.dart # Theme switching
-    ├── screens/            # Main application screens
+    │   └── dark_mode_toggle.dart # Theme switching    ├── screens/            # Main application screens
     │   ├── auth/          # Authentication screens
-    │   ├── home/          # Home dashboard
+    │   ├── summary/       # Financial summary dashboard
     │   └── profile/       # User profile screens
     └── app_theme.dart     # Global theme configuration
 ```

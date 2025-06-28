@@ -5,7 +5,7 @@ import 'package:simpannow/core/services/user_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
 import 'package:simpannow/ui/components/navigation/side_navigation.dart';
 import 'package:simpannow/ui/components/navigation/top_bar.dart';
-import 'package:simpannow/ui/screens/home/financial_summary_card.dart';
+import 'package:simpannow/ui/screens/summary/financial_summary_card.dart';
 import 'package:simpannow/ui/features/transactions/transaction_list_item.dart';
 import 'package:simpannow/ui/features/transactions/add_transaction_dialog.dart';
 import 'package:simpannow/ui/features/transactions/delete_transaction_dialog.dart';
@@ -15,9 +15,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
-  // Builds the main home screen with financial tracking functionality
-  const HomePage({super.key});
+class SummaryPage extends StatelessWidget {
+  // Builds the main financial summary screen with transaction tracking functionality
+  const SummaryPage({super.key});
 
   @override
   Widget build(BuildContext context) {

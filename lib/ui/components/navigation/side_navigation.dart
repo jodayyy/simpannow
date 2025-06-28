@@ -19,7 +19,7 @@ class SideNavigation extends StatelessWidget {
     final user = userService.currentUser;
     
     return Container(
-      margin: const EdgeInsets.all(4.0), // Add margin to all sides
+      margin: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         border: Border.all(
           color: Theme.of(context).colorScheme.primary,
@@ -33,7 +33,8 @@ class SideNavigation extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: ListView(                  padding: EdgeInsets.zero,
+                child: ListView(
+                  padding: EdgeInsets.zero,
                   children: [
                     // Combined user header and profile navigation
                     Container(
@@ -118,7 +119,8 @@ class SideNavigation extends StatelessWidget {
                               ),
                             ],
                           ),
-                        ),                      ),
+                        ),
+                      ),
                     ),
                     // Divider after profile section
                     Divider(
@@ -126,7 +128,8 @@ class SideNavigation extends StatelessWidget {
                       height: 1,
                       thickness: 1,
                     ),
-                    const SizedBox(height: 8),                  ],
+                    const SizedBox(height: 8),
+                  ],
                 ),
               ),
               // Divider before bottom section

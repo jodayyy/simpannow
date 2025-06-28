@@ -14,7 +14,9 @@ class FinancialSummaryCard extends StatefulWidget {
 }
 
 class _FinancialSummaryCardState extends State<FinancialSummaryCard> {
-  bool _showBalance = false;  @override
+  bool _showBalance = false;
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,

@@ -20,7 +20,10 @@ class DarkModeToggle extends StatelessWidget {
         padding: const EdgeInsets.all(4.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppTheme.getPrimaryColor(isDarkMode), width: 1),
+          border: Border.all(
+            color: AppTheme.getPrimaryColor(isDarkMode),
+            width: 1,
+          ),
           color: isDarkMode ? Colors.grey[800] : Colors.white,
         ),
         child: Row(

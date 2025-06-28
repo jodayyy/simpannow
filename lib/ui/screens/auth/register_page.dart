@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -42,20 +41,20 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (success) {
-        Fluttertoast.showToast(
-          msg: "Registration successful! Welcome to SimpanNow.",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text("Registration successful! Welcome to SimpanNow."),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 3),
+          ),
         );
       } else if (mounted) {
-        Fluttertoast.showToast(
-          msg: authService.errorMessage ?? "Registration failed",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authService.errorMessage ?? "Registration failed"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
         );
       }
     }
@@ -109,18 +108,17 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(height: 40),
                         TextFormField(
                           controller: _emailController,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             labelText: 'Email',
                             prefixIcon: Icon(FontAwesomeIcons.envelope, size: 14),
-                            border: OutlineInputBorder(),
+                            border: Theme.of(context).inputDecorationTheme.border,
                           ),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                .hasMatch(value)) {
+                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                               return 'Please enter a valid email';
                             }
                             return null;

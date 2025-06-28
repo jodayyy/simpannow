@@ -19,7 +19,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
-  bool _isEditing = false;
 
   @override
   void initState() {
@@ -38,13 +37,6 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  void _toggleEdit() {
-    // Toggles between view mode and edit mode
-    setState(() {
-      _isEditing = !_isEditing;
-    });
-  }
-
   void _saveUsername() async {
     // Validates and saves the edited username
     if (_formKey.currentState!.validate()) {
@@ -54,12 +46,12 @@ class _ProfilePageState extends State<ProfilePage> {
       // First check if the user document exists, create if needed
       final success = await userService.ensureUserDocumentExists();
       if (!success) {
-        Fluttertoast.showToast(
-          msg: userService.errorMessage ?? "Failed to create user profile",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(userService.errorMessage ?? "Failed to create user profile"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
         );
         return;
       }
@@ -68,6 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
       
       if (updateSuccess) {
         // Force refresh user data to ensure all listeners get the update
+        // ignore: use_build_context_synchronously
         final authService = Provider.of<AuthService>(context, listen: false);
         if (authService.user != null) {
           await userService.fetchUserData(authService.user!.uid);
@@ -80,9 +73,6 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.green,
           textColor: Colors.white,
         );
-        setState(() {
-          _isEditing = false;
-        });
       } else {
         Fluttertoast.showToast(
           msg: userService.errorMessage ?? "Failed to update username",
@@ -104,13 +94,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        actions: [
-          if (!_isEditing)
-            IconButton(
-              icon: const Icon(FontAwesomeIcons.penToSquare),
-              onPressed: _toggleEdit,
-            ),
-        ],
       ),
       body: Form(
               key: _formKey,
@@ -139,58 +122,49 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    const Text(
-                      'Username',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        // Apply the InputDecorationTheme from AppTheme
+                        border: Theme.of(context).inputDecorationTheme.border,
+                        focusedBorder: Theme.of(context).inputDecorationTheme.focusedBorder,
+                        iconColor: Theme.of(context).inputDecorationTheme.iconColor,
+                        prefixIconColor: Theme.of(context).inputDecorationTheme.prefixIconColor,
+                        suffixIconColor: Theme.of(context).inputDecorationTheme.suffixIconColor,
+                        labelStyle: Theme.of(context).inputDecorationTheme.labelStyle,
+                      ),
+                      validator: (value) {
+                        if (value != null && value.isNotEmpty && value.length < 3) {
+                          return 'Username must be at least 3 characters';
+                        }
+                        return null;
+                      },
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: FloatingActionButton.extended(
+                        onPressed: _saveUsername,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: 1,
+                          ),
+                        ),
+                        icon: Icon(
+                          FontAwesomeIcons.save,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        label: Text(
+                          'Save',
+                          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    _isEditing
-                      ? TextFormField(
-                          controller: _usernameController,
-                          // Username field for editing
-                          decoration: const InputDecoration(
-                            hintText: 'Enter your username',
-                            border: UnderlineInputBorder(),
-                          ),
-                          validator: (value) {
-                            if (value != null && value.isNotEmpty && value.length < 3) {
-                              return 'Username must be at least 3 characters';
-                            }
-                            return null;
-                          },
-                        )
-                      : Text(
-                          user?.username ?? 'No username set',
-                          // Displays existing username if not editing
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                    const Spacer(),
-                    if (_isEditing)
-                      Row(
-                        // Buttons to cancel or save edits
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          ElevatedButton(
-                            onPressed: _toggleEdit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.grey,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            ),
-                            child: const Text('Cancel'),
-                          ),
-                          ElevatedButton(
-                            onPressed: _saveUsername,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                            ),
-                            child: const Text('Save'),
-                          ),
-                        ],
-                      ),
                   ],
                 ),
               ),

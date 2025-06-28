@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/firebase_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
+import 'package:simpannow/core/services/transaction_service.dart';
 import 'package:simpannow/ui/screens/auth/auth_wrapper.dart';
 import 'package:simpannow/ui/app_theme.dart';
 import 'package:simpannow/core/services/theme_service.dart';
@@ -32,10 +33,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Provides AuthService, UserService, and ThemeNotifier throughout the app
-    return MultiProvider(
-      providers: [
+    return MultiProvider(      providers: [
         ChangeNotifierProvider(create: (_) => AuthService()),
         ChangeNotifierProvider(create: (_) => UserService()),
+        ChangeNotifierProvider(create: (_) => TransactionService()),
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
       ],
       child: Consumer<ThemeNotifier>(

@@ -21,21 +21,19 @@ class AppTheme {
         primary: primaryColor,
         secondary: secondaryColor,
         surface: backgroundColor,
-        background: backgroundColor,
         error: Colors.red,
         onPrimary: Colors.white,
         onSecondary: Colors.black,
         onSurface: primaryColor,
-        onBackground: primaryColor,
         onError: Colors.white,
       ),
       iconTheme: IconThemeData(
         color: primaryColor,
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: primaryColor,
+        backgroundColor: backgroundColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: primaryColor),
       ),
       textTheme: TextTheme(
         headlineMedium: TextStyle(

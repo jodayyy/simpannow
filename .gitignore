@@ -48,3 +48,6 @@ app.*.map.json
 
 # Firebase service file
 lib/core/services/firebase_service.dart
+
+# Firebase cache and deployment files
+.firebase/

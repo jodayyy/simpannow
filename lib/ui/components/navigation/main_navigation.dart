@@ -24,28 +24,39 @@ class _MainNavigationState extends State<MainNavigation> {
     // Displays the selected screen and bottom navigation
     return Scaffold(
       body: _currentIndex == 0 ? _screens[0] : const Center(child: Text('Coming Soon')),
-      bottomNavigationBar: BottomNavigationBar(
-        // Controls which tab is active
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Theme.of(context).colorScheme.primary, // Updated to dynamic color
-        unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), // Updated to dynamic color
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.house),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+              width: 1,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(FontAwesomeIcons.moneyBillWave),
-            label: 'Transactions',
-          ),
-        ],
-        onTap: (index) {
-          setState(() {
-            // Provide actual navigation for index 0; placeholders for others
-            _currentIndex = index;
-          });
-        },
+        ),
+        child: BottomNavigationBar(
+          // Controls which tab is active
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Theme.of(context).colorScheme.primary, // Updated to dynamic color
+          // ignore: deprecated_member_use
+          unselectedItemColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), // Updated to dynamic color
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(FontAwesomeIcons.house),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FontAwesomeIcons.moneyBillWave),
+              label: 'Transactions',
+            ),
+          ],
+          onTap: (index) {
+            setState(() {
+              // Provide actual navigation for index 0; placeholders for others
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

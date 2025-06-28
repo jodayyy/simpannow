@@ -48,6 +48,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     if (authService.isLoggedIn && authService.user != null) {
       // Use Future.microtask to schedule the fetch after the build is complete
       Future.microtask(() {
+        // ignore: use_build_context_synchronously
         final userService = Provider.of<UserService>(context, listen: false);
         userService.fetchUserData(authService.user!.uid);
       });

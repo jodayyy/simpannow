@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/ui/screens/auth/register_page.dart';
@@ -63,12 +62,12 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (!success && mounted) {
-        Fluttertoast.showToast(
-          msg: authService.errorMessage ?? "Login failed",
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authService.errorMessage ?? "Login failed"),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
         );
       }
     }
@@ -124,10 +123,10 @@ class _LoginPageState extends State<LoginPage> {
                               const SizedBox(height: 40),
                               TextFormField(
                                 controller: _emailController,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: 'Email',
-                                  border: OutlineInputBorder(),
                                   prefixIcon: Icon(FontAwesomeIcons.envelope, size: 14),
+                                  border: Theme.of(context).inputDecorationTheme.border,
                                 ),
                                 keyboardType: TextInputType.emailAddress,
                                 autocorrect: false,
@@ -202,9 +201,11 @@ class _LoginPageState extends State<LoginPage> {
                                   TextButton(
                                     onPressed: () {
                                       // Future feature: forgot password
-                                      Fluttertoast.showToast(
-                                        msg: "Password reset feature coming soon",
-                                        toastLength: Toast.LENGTH_SHORT,
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: const Text("Password reset feature coming soon"),
+                                          duration: const Duration(seconds: 3),
+                                        ),
                                       );
                                     },
                                     child: Text(

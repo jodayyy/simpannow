@@ -19,62 +19,81 @@ class SideNavigation extends StatelessWidget {
     final user = userService.currentUser;
     
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4.0), // Add vertical margin
-      child: Drawer(
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: [
-                  UserAccountsDrawerHeader(
-                    // Shows user’s display name and profile icon
-                    accountName: Text(userService.getDisplayName()),
-                    accountEmail: Text(user?.email ?? ''),
-                    currentAccountPicture: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      child: Icon(
-                        FontAwesomeIcons.user,
-                        color: Theme.of(context).primaryColor,
+      margin: const EdgeInsets.all(4.0), // Add margin to all sides
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary,
+          width: 1,
+        ),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Drawer(
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    UserAccountsDrawerHeader(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                      ),
+                      // Shows user’s display name and profile icon
+                      accountName: Text(
+                        userService.getDisplayName(),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      ),
+                      accountEmail: Text(
+                        user?.email ?? '',
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                      ),
+                      currentAccountPicture: CircleAvatar(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        child: Icon(
+                          FontAwesomeIcons.user,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
                       ),
                     ),
-                  ),
-                  ListTile(
-                    leading: const Icon(FontAwesomeIcons.user),
-                    title: const Text('Profile'),
-                    onTap: () {
-                      // Navigate to profile details
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProfilePage()),
-                      );
-                    },
-                  ),
-                  const Divider(),
-                ],
+                    ListTile(
+                      leading: const Icon(FontAwesomeIcons.user),
+                      title: const Text('Profile'),
+                      onTap: () {
+                        // Navigate to profile details
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProfilePage()),
+                        );
+                      },
+                    ),
+                    const Divider(),
+                  ],
+                ),
               ),
-            ),
-            // Bottom row with dark mode toggle and logout button
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  const DarkModeToggle(),
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(FontAwesomeIcons.rightFromBracket),
-                        onPressed: () => authService.signOut(),
-                      ),
-                      const Text('Logout', style: TextStyle(fontSize: 12)),
-                    ],
-                  ),
-                ],
+              // Bottom row with dark mode toggle and logout button
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    const DarkModeToggle(),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: const Icon(FontAwesomeIcons.rightFromBracket),
+                          onPressed: () => authService.signOut(),
+                        ),
+                        const Text('Logout', style: TextStyle(fontSize: 12)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

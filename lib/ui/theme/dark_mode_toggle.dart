@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/theme_service.dart';
-import 'package:simpannow/ui/app_theme.dart';
+import 'package:simpannow/ui/theme/app_theme.dart';
 
 class DarkModeToggle extends StatelessWidget {
   const DarkModeToggle({super.key});

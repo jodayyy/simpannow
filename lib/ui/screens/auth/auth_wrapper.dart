@@ -7,7 +7,7 @@ import 'package:simpannow/ui/screens/auth/register_page.dart';
 import 'package:simpannow/ui/components/navigation/main_navigation.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
-import 'package:simpannow/ui/features/dark_mode_toggle.dart';
+import 'package:simpannow/ui/theme/dark_mode_toggle.dart';
 
 class AuthWrapper extends StatefulWidget {
   // Decides whether user sees login/register or main navigation

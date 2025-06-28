@@ -6,7 +6,7 @@ import 'package:simpannow/core/services/firebase_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
 import 'package:simpannow/ui/screens/auth/auth_wrapper.dart';
-import 'package:simpannow/ui/app_theme.dart';
+import 'package:simpannow/ui/theme/app_theme.dart';
 import 'package:simpannow/core/services/theme_service.dart';
 
 import 'package:provider/provider.dart';

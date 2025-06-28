@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:simpannow/ui/screens/profile/profile_page.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
-import 'package:simpannow/ui/features/dark_mode_toggle.dart';
+import 'package:simpannow/ui/theme/dark_mode_toggle.dart';
 
 import 'package:provider/provider.dart';
 

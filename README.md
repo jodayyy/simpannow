@@ -111,10 +111,7 @@ lib/
 1. Create a new Firebase project at [console.firebase.google.com](https://console.firebase.google.com/)
 2. Enable Authentication with Email/Password
 3. Set up Firestore Database
-4. Download the Firebase configuration files:
-   - For Android: `google-services.json` to `android/app/`
-   - For iOS: `GoogleService-Info.plist` to `ios/Runner/`
-5. Create your Firebase service file:
+4. Create your Firebase service file:
    - Copy `lib/core/services/firebase_service.example.dart` to `lib/core/services/firebase_service.dart`
    - Replace the placeholder values in `firebase_service.dart` with your own Firebase project configuration
    - **Important**: This file contains sensitive credentials and is gitignored for security
@@ -123,7 +120,7 @@ lib/
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/simpannow.git
+   git clone https://github.com/jodayyy/simpannow
    ```
 
 2. Install dependencies

@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:simpannow/ui/screens/summary/summary_page.dart';
 import 'package:simpannow/ui/screens/transactions/transactions_page.dart';
+import 'package:simpannow/ui/screens/accounts/accounts_page.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -29,6 +30,7 @@ class _MainNavigationState extends State<MainNavigation> {  int _currentIndex = 
         },
       ),
       const TransactionsPage(),
+      const AccountsPage(), // NEW: Accounts page
     ];
   }
 
@@ -59,6 +61,10 @@ class _MainNavigationState extends State<MainNavigation> {  int _currentIndex = 
             BottomNavigationBarItem(
               icon: Icon(FontAwesomeIcons.moneyBillWave),
               label: 'Transactions',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(FontAwesomeIcons.piggyBank),
+              label: 'Accounts',
             ),
           ],
           onTap: (index) {

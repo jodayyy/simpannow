@@ -4,9 +4,11 @@ import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
+import 'package:simpannow/core/services/account_service.dart';
 import 'package:simpannow/ui/components/navigation/side_navigation.dart';
 import 'package:simpannow/ui/components/navigation/top_bar.dart';
 import 'package:simpannow/data/models/transaction_model.dart';
+import 'package:simpannow/data/models/account_model.dart';
 import 'package:simpannow/ui/features/transactions/transaction_card_group.dart';
 import 'package:simpannow/ui/features/transactions/add_transaction_dialog.dart';
 import 'package:simpannow/ui/features/transactions/delete_transaction_dialog.dart';
@@ -21,6 +23,7 @@ class TransactionsPage extends StatefulWidget {
 class _TransactionsPageState extends State<TransactionsPage> {
   String _selectedFilter = 'All';
   String _selectedCategory = 'All';
+  String _selectedAccount = 'All'; // NEW: Account filter
   String _sortBy = 'Date (Newest)';
 
   final List<String> _filterOptions = ['All', 'Income', 'Expense'];
@@ -89,29 +92,43 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          // Single Filter Row with 3 filters
-                          Row(
+                          // Filter Grid (2x2)
+                          Column(
                             children: [
-                              Expanded(
-                                child: _buildFilterDropdown(
-                                  'Type',
-                                  _selectedFilter,
-                                  _filterOptions,
-                                  (value) => setState(() => _selectedFilter = value!),
-                                ),
+                              // First Row: Type and Category
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildFilterDropdown(
+                                      'Type',
+                                      _selectedFilter,
+                                      _filterOptions,
+                                      (value) => setState(() => _selectedFilter = value!),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: _buildCategoryDropdown(transactionService),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildCategoryDropdown(transactionService),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: _buildFilterDropdown(
-                                  'Sort',
-                                  _sortBy,
-                                  _sortOptions,
-                                  (value) => setState(() => _sortBy = value!),
-                                ),
+                              const SizedBox(height: 8),
+                              // Second Row: Account and Sort
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildAccountDropdown(),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: _buildFilterDropdown(
+                                      'Sort',
+                                      _sortBy,
+                                      _sortOptions,
+                                      (value) => setState(() => _sortBy = value!),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -199,7 +216,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
                             child: Text(
-                              '${filteredTransactions.length} transaction${filteredTransactions.length == 1 ? '' : 's'} found',
+                              '${filteredTransactions.length} Transaction${filteredTransactions.length == 1 ? '' : 's'} Found',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -374,6 +391,106 @@ class _TransactionsPageState extends State<TransactionsPage> {
     );
   }
 
+  Widget _buildAccountDropdown() {
+    return Consumer<AccountService>(
+      builder: (context, accountService, _) {
+        return StreamBuilder<List<Account>>(
+          stream: accountService.getUserAccountsStream(
+            Provider.of<AuthService>(context, listen: false).user?.uid ?? ''
+          ),
+          builder: (context, snapshot) {
+            final accounts = snapshot.data ?? [];
+            final accountOptions = [
+              'All',
+              'General (No Account)',
+              ...accounts.map((account) => account.name)
+            ];
+            
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Account',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: DropdownButton<String>(
+                    value: _selectedAccount,
+                    isExpanded: true,
+                    underline: const SizedBox.shrink(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    isDense: true,
+                    items: accountOptions.map((option) {
+                      return DropdownMenuItem<String>(
+                        value: option,
+                        child: Row(
+                          children: [
+                            if (option == 'All') ...[
+                              const Text('📊', style: TextStyle(fontSize: 12)),
+                              const SizedBox(width: 4),
+                            ] else if (option == 'General (No Account)') ...[
+                              const Text('💰', style: TextStyle(fontSize: 12)),
+                              const SizedBox(width: 4),
+                            ] else ...[
+                              // Find the account and show its icon
+                              Builder(
+                                builder: (context) {
+                                  final account = accounts.firstWhere(
+                                    (account) => account.name == option,
+                                    orElse: () => Account(
+                                      id: '', userId: '', name: '', type: 'Cash', 
+                                      balance: 0, description: '', createdAt: DateTime.now()
+                                    )
+                                  );
+                                  return Text(
+                                    Account.getTypeIcon(account.type),
+                                    style: const TextStyle(fontSize: 12),
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 4),
+                            ],
+                            Expanded(
+                              child: Text(
+                                option,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) => setState(() => _selectedAccount = value!),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   List<Transaction> _filterAndSortTransactions(List<Transaction> transactions) {
     var filtered = transactions.where((transaction) {
       // Filter by type
@@ -389,6 +506,34 @@ class _TransactionsPageState extends State<TransactionsPage> {
       // Filter by category
       if (_selectedCategory != 'All' && transaction.category != _selectedCategory) {
         return false;
+      }
+
+      // Filter by account
+      if (_selectedAccount != 'All') {
+        if (_selectedAccount == 'General (No Account)') {
+          // Show transactions with no account or empty accountId
+          if (transaction.accountId != null && transaction.accountId!.isNotEmpty) {
+            return false;
+          }
+        } else {
+          // Show transactions linked to the selected account
+          // Find the account by name and check if transaction.accountId matches
+          final accountService = Provider.of<AccountService>(context, listen: false);
+          
+          // Get accounts synchronously from the current state
+          final accounts = accountService.accounts;
+          final selectedAccount = accounts.firstWhere(
+            (account) => account.name == _selectedAccount,
+            orElse: () => Account(
+              id: '', userId: '', name: '', type: '', 
+              balance: 0, description: '', createdAt: DateTime.now()
+            )
+          );
+          
+          if (selectedAccount.id.isEmpty || transaction.accountId != selectedAccount.id) {
+            return false;
+          }
+        }
       }
 
       return true;

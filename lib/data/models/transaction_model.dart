@@ -11,6 +11,7 @@ class Transaction {
   final String category;
   final DateTime createdAt;
   final String? description;
+  final String? accountId; // NEW: Optional account reference
 
   Transaction({
     required this.id,
@@ -21,6 +22,7 @@ class Transaction {
     required this.category,
     required this.createdAt,
     this.description,
+    this.accountId, // NEW: Optional account reference
   });
 
   factory Transaction.fromMap(Map<String, dynamic> map) {
@@ -36,6 +38,7 @@ class Transaction {
       category: map['category'] ?? '',
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       description: map['description'],
+      accountId: map['accountId'], // NEW: Optional account reference
     );
   }
 
@@ -49,6 +52,7 @@ class Transaction {
       'category': category,
       'createdAt': Timestamp.fromDate(createdAt),
       'description': description,
+      'accountId': accountId, // NEW: Optional account reference
     };
   }
 
@@ -61,6 +65,7 @@ class Transaction {
     String? category,
     DateTime? createdAt,
     String? description,
+    String? accountId, // NEW: Optional account reference
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -71,6 +76,7 @@ class Transaction {
       category: category ?? this.category,
       createdAt: createdAt ?? this.createdAt,
       description: description ?? this.description,
+      accountId: accountId ?? this.accountId, // NEW: Optional account reference
     );
   }
 }

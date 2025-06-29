@@ -9,23 +9,40 @@ import 'package:simpannow/core/utils/toast_utils.dart';
 import 'package:simpannow/data/models/transaction_model.dart';
 import 'package:simpannow/data/models/account_model.dart';
 
-class AddTransactionDialog extends StatefulWidget {
-  const AddTransactionDialog({super.key});
+class EditTransactionDialog extends StatefulWidget {
+  final Transaction transaction;
+
+  const EditTransactionDialog({
+    super.key,
+    required this.transaction,
+  });
 
   @override
-  State<AddTransactionDialog> createState() => _AddTransactionDialogState();
+  State<EditTransactionDialog> createState() => _EditTransactionDialogState();
 }
 
-class _AddTransactionDialogState extends State<AddTransactionDialog> {
+class _EditTransactionDialogState extends State<EditTransactionDialog> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
   
-  TransactionType _selectedType = TransactionType.EXPENSE;
-  String _selectedCategory = 'Food';
-  String? _selectedAccountId; // NEW: Optional account selection
+  late TransactionType _selectedType;
+  late String _selectedCategory;
+  String? _selectedAccountId;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize with existing transaction data
+    _titleController.text = widget.transaction.title;
+    _amountController.text = widget.transaction.amount.toStringAsFixed(2);
+    _descriptionController.text = widget.transaction.description ?? '';
+    _selectedType = widget.transaction.type;
+    _selectedCategory = widget.transaction.category;
+    _selectedAccountId = widget.transaction.accountId;
+  }
 
   @override
   void dispose() {
@@ -37,7 +54,6 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final transactionService = Provider.of<TransactionService>(context);
     final accountService = Provider.of<AccountService>(context);
     
     return Dialog(
@@ -53,10 +69,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
             children: [
               Row(
                 children: [
-                  const Icon(FontAwesomeIcons.plus),
+                  const Icon(FontAwesomeIcons.penToSquare),
                   const SizedBox(width: 8),
                   const Text(
-                    'Add Transaction',
+                    'Edit Transaction',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -100,7 +116,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                FontAwesomeIcons.arrowTrendUp,
+                                FontAwesomeIcons.plus,
                                 color: _selectedType == TransactionType.INCOME 
                                     ? Colors.white 
                                     : Colors.green,
@@ -113,7 +129,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                                   color: _selectedType == TransactionType.INCOME 
                                       ? Colors.white 
                                       : Colors.green,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -139,7 +155,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                FontAwesomeIcons.arrowTrendDown,
+                                FontAwesomeIcons.minus,
                                 color: _selectedType == TransactionType.EXPENSE 
                                     ? Colors.white 
                                     : Colors.red,
@@ -152,7 +168,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                                   color: _selectedType == TransactionType.EXPENSE 
                                       ? Colors.white 
                                       : Colors.red,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -166,13 +182,15 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               
               const SizedBox(height: 16),
               
-              // Title Field
+              // Title field
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Title',
-                  prefixIcon: Icon(FontAwesomeIcons.tag, size: 16),
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(FontAwesomeIcons.tag),
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -184,17 +202,19 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               
               const SizedBox(height: 16),
               
-              // Amount Field
+              // Amount field
               TextFormField(
                 controller: _amountController,
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  prefixIcon: Icon(FontAwesomeIcons.dollarSign, size: 16),
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: 'Amount (RM)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(FontAwesomeIcons.dollarSign),
                 ),
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -210,22 +230,24 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               
               const SizedBox(height: 16),
               
-              // Category Dropdown
+              // Category dropdown
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Category',
-                  prefixIcon: Icon(FontAwesomeIcons.list, size: 16),
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(FontAwesomeIcons.list),
                 ),
-                items: transactionService.getCategoryNames().map((category) {
+                items: TransactionService.categories.keys.map((category) {
                   return DropdownMenuItem(
                     value: category,
                     child: Row(
                       children: [
                         Text(
-                          transactionService.getCategoryIcon(category),
-                          style: const TextStyle(fontSize: 20),
+                          TransactionService.categories[category] ?? '📝',
+                          style: const TextStyle(fontSize: 18),
                         ),
                         const SizedBox(width: 8),
                         Text(category),
@@ -242,31 +264,29 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               
               const SizedBox(height: 16),
               
-              // Account Dropdown (Optional)
+              // Account dropdown
               StreamBuilder<List<Account>>(
                 stream: accountService.getUserAccountsStream(
-                  Provider.of<AuthService>(context, listen: false).user?.uid ?? ''
+                  Provider.of<AuthService>(context, listen: false).user!.uid,
                 ),
                 builder: (context, snapshot) {
                   final accounts = snapshot.data ?? [];
                   
-                  if (accounts.isEmpty) {
-                    return const SizedBox.shrink(); // Don't show if no accounts
-                  }
-                  
                   return DropdownButtonFormField<String?>(
                     value: _selectedAccountId,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       labelText: 'Account (Optional)',
-                      prefixIcon: Icon(FontAwesomeIcons.piggyBank, size: 16),
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      prefixIcon: const Icon(FontAwesomeIcons.piggyBank),
                     ),
                     items: [
                       const DropdownMenuItem<String?>(
                         value: null,
                         child: Row(
                           children: [
-                            Text('💰', style: TextStyle(fontSize: 20)),
+                            Text('📝', style: TextStyle(fontSize: 18)),
                             SizedBox(width: 8),
                             Text('General (No Account)'),
                           ],
@@ -279,14 +299,19 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
                             children: [
                               Text(
                                 Account.getTypeIcon(account.type),
-                                style: const TextStyle(fontSize: 20),
+                                style: const TextStyle(fontSize: 18),
                               ),
                               const SizedBox(width: 8),
-                              Text(account.name),
+                              Expanded(
+                                child: Text(
+                                  '${account.name} (${account.type})',
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ],
                     onChanged: (value) {
                       setState(() => _selectedAccountId = value);
@@ -297,45 +322,55 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
               
               const SizedBox(height: 16),
               
-              // Description Field (Optional)
+              // Description field
               TextFormField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Description (Optional)',
-                  prefixIcon: Icon(FontAwesomeIcons.noteSticky, size: 16),
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  prefixIcon: const Icon(FontAwesomeIcons.noteSticky),
                 ),
-                maxLines: 2,
+                maxLines: 3,
+                maxLength: 200,
               ),
               
-              const SizedBox(height: 24),
+              const SizedBox(height: 20),
               
-              // Save Button
+              // Update button
               ElevatedButton(
-                onPressed: _isLoading ? null : _saveTransaction,
+                onPressed: _isLoading ? null : _updateTransaction,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.surface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary,
-                      width: 1,
-                    ),
-                  ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: _isLoading
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(
-                        'Save Transaction',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.onSurface,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(FontAwesomeIcons.floppyDisk),
+                          SizedBox(width: 8),
+                          Text(
+                            'Update Transaction',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
               ),
             ],
@@ -345,42 +380,50 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
     );
   }
 
-  void _saveTransaction() async {
+  Future<void> _updateTransaction() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
-    final authService = Provider.of<AuthService>(context, listen: false);
-    final transactionService = Provider.of<TransactionService>(context, listen: false);
+    try {
+      final authService = Provider.of<AuthService>(context, listen: false);
+      final transactionService = Provider.of<TransactionService>(context, listen: false);
 
-    if (authService.user == null) {
-      ToastUtils.showErrorToast(context, "User not authenticated");
-      setState(() => _isLoading = false);
-      return;
-    }    final transaction = Transaction(
-      id: '', // Will be set by Firestore
-      userId: authService.user!.uid,
-      title: _titleController.text.trim(),
-      amount: double.parse(_amountController.text.trim()),
-      type: _selectedType,
-      category: _selectedCategory,
-      createdAt: DateTime.now(),
-      description: _descriptionController.text.trim().isEmpty 
-          ? null 
-          : _descriptionController.text.trim(),
-      accountId: _selectedAccountId, // NEW: Optional account reference
-    );
+      final amount = double.parse(_amountController.text);
+      
+      final updatedTransaction = Transaction(
+        id: widget.transaction.id,
+        title: _titleController.text.trim(),
+        amount: amount,
+        type: _selectedType,
+        category: _selectedCategory,
+        description: _descriptionController.text.trim(),
+        accountId: _selectedAccountId,
+        userId: widget.transaction.userId,
+        createdAt: widget.transaction.createdAt,
+      );
 
-    final success = await transactionService.addTransaction(transaction);
+      final success = await transactionService.updateTransaction(
+        authService.user!.uid,
+        updatedTransaction,
+        widget.transaction, // Pass original transaction for balance calculations
+      );
 
-    setState(() => _isLoading = false);
-
-    if (mounted) {
-      if (success) {
-        ToastUtils.showSuccessToast(context, "Transaction added successfully!");
-        Navigator.of(context).pop();
-      } else {
-        ToastUtils.showErrorToast(context, transactionService.errorMessage ?? "Failed to add transaction");
+      if (mounted) {
+        if (success) {
+          Navigator.of(context).pop();
+          ToastUtils.showSuccessToast(context, "Transaction updated successfully!");
+        } else {
+          ToastUtils.showErrorToast(context, transactionService.errorMessage ?? "Failed to update transaction");
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ToastUtils.showErrorToast(context, "Error: $e");
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
       }
     }
   }

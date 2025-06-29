@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
 import 'package:simpannow/ui/features/transactions/delete_transaction_dialog.dart';
+import 'package:simpannow/ui/features/transactions/edit_transaction_dialog.dart';
 import 'package:simpannow/data/models/transaction_model.dart';
 
 class TransactionListItem extends StatelessWidget {
@@ -28,8 +29,20 @@ class TransactionListItem extends StatelessWidget {
 
     final listTileContent = Dismissible(
       key: Key(transaction.id),
-      direction: DismissDirection.endToStart,
+      direction: DismissDirection.horizontal,
       background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: borderRadius ?? BorderRadius.circular(12),
+        ),
+        child: const Icon(
+          FontAwesomeIcons.penToSquare,
+          color: Colors.white,
+        ),
+      ),
+      secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
@@ -45,13 +58,22 @@ class TransactionListItem extends StatelessWidget {
         final authService = Provider.of<AuthService>(context, listen: false);
         final transactionService = Provider.of<TransactionService>(context, listen: false);
 
-        deleteTransaction(
-          context,
-          transactionService,
-          authService.user!.uid,
-          transaction.id,
-          transaction.title,
-        );
+        if (direction == DismissDirection.endToStart) {
+          // Delete transaction (swipe left)
+          deleteTransaction(
+            context,
+            transactionService,
+            authService.user!.uid,
+            transaction.id,
+            transaction.title,
+          );
+        } else if (direction == DismissDirection.startToEnd) {
+          // Edit transaction (swipe right)
+          showDialog(
+            context: context,
+            builder: (context) => EditTransactionDialog(transaction: transaction),
+          );
+        }
         return false; // Prevent automatic dismissal
       },
       onDismissed: (direction) {

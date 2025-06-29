@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
+import 'package:simpannow/core/utils/toast_utils.dart';
 
 class DeleteTransactionDialog extends StatelessWidget {
   final String transactionTitle;
@@ -49,21 +50,11 @@ void deleteTransaction(
         final success = await transactionService.deleteTransaction(userId, transactionId);
 
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text("Transaction deleted successfully"),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+          // ignore: use_build_context_synchronously
+          ToastUtils.showSuccessToast(context, "Transaction deleted successfully");
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(transactionService.errorMessage ?? "Failed to delete transaction"),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
-          );
+          // ignore: use_build_context_synchronously
+          ToastUtils.showErrorToast(context, transactionService.errorMessage ?? "Failed to delete transaction");
         }
       },
     ),

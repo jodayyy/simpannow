@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:simpannow/core/services/user_service.dart';
 import 'package:simpannow/core/services/auth_service.dart';
-
+import 'package:simpannow/core/utils/toast_utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -46,13 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
       // First check if the user document exists, create if needed
       final success = await userService.ensureUserDocumentExists();
       if (!success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(userService.errorMessage ?? "Failed to create user profile"),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        ToastUtils.showErrorToast(context, userService.errorMessage ?? "Failed to create user profile");
         return;
       }
       
@@ -66,21 +58,11 @@ class _ProfilePageState extends State<ProfilePage> {
           await userService.fetchUserData(authService.user!.uid);
         }
         
-        Fluttertoast.showToast(
-          msg: "Username updated successfully!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.green,
-          textColor: Colors.white,
-        );
+        // ignore: use_build_context_synchronously
+        ToastUtils.showSuccessToast(context, "Username updated successfully!");
       } else {
-        Fluttertoast.showToast(
-          msg: userService.errorMessage ?? "Failed to update username",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
+        // ignore: use_build_context_synchronously
+        ToastUtils.showErrorToast(context, userService.errorMessage ?? "Failed to update username");
       }
     }
   }

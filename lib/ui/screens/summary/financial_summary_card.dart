@@ -19,7 +19,7 @@ class _FinancialSummaryCardState extends State<FinancialSummaryCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 4,
+      elevation: 5,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(

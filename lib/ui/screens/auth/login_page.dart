@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
+import 'package:simpannow/core/utils/toast_utils.dart';
 import 'package:simpannow/ui/screens/auth/register_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -62,13 +63,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (!success && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(authService.errorMessage ?? "Login failed"),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        ToastUtils.showErrorToast(context, authService.errorMessage ?? "Login failed");
       }
     }
   }
@@ -201,12 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                                   TextButton(
                                     onPressed: () {
                                       // Future feature: forgot password
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                          content: const Text("Password reset feature coming soon"),
-                                          duration: const Duration(seconds: 3),
-                                        ),
-                                      );
+                                      ToastUtils.showInfoToast(context, "Password reset feature coming soon");
                                     },
                                     child: Text(
                                       'Forgot Password?',

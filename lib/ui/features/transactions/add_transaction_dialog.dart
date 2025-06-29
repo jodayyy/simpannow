@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
+import 'package:simpannow/core/utils/toast_utils.dart';
 import 'package:simpannow/data/models/transaction_model.dart';
 
 class AddTransactionDialog extends StatefulWidget {
@@ -294,13 +295,7 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
     final transactionService = Provider.of<TransactionService>(context, listen: false);
 
     if (authService.user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("User not authenticated"),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      ToastUtils.showErrorToast(context, "User not authenticated");
       setState(() => _isLoading = false);
       return;
     }    final transaction = Transaction(
@@ -321,22 +316,10 @@ class _AddTransactionDialogState extends State<AddTransactionDialog> {
     setState(() => _isLoading = false);
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Transaction added successfully!"),
-          backgroundColor: Colors.green,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      ToastUtils.showSuccessToast(context, "Transaction added successfully!");
       Navigator.of(context).pop();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(transactionService.errorMessage ?? "Failed to add transaction"),
-          backgroundColor: Colors.red,
-          duration: const Duration(seconds: 3),
-        ),
-      );
+      ToastUtils.showErrorToast(context, transactionService.errorMessage ?? "Failed to add transaction");
     }
   }
 }

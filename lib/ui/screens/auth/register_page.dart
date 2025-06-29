@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:simpannow/core/services/auth_service.dart';
+import 'package:simpannow/core/utils/toast_utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -41,21 +42,10 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text("Registration successful! Welcome to SimpanNow."),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        ToastUtils.showSuccessToast(context, "Registration successful! Welcome to SimpanNow.");
       } else if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(authService.errorMessage ?? "Registration failed"),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
+        ToastUtils.showErrorToast(context, authService.errorMessage ?? "Registration failed");
       }
     }
   }

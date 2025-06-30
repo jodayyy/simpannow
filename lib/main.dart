@@ -6,6 +6,7 @@ import 'package:simpannow/core/services/firebase_service.dart';
 import 'package:simpannow/core/services/user_service.dart';
 import 'package:simpannow/core/services/transaction_service.dart';
 import 'package:simpannow/core/services/account_service.dart';
+import 'package:simpannow/core/services/monthly_summary_service.dart';
 import 'package:simpannow/ui/screens/auth/auth_wrapper.dart';
 import 'package:simpannow/ui/theme/app_theme.dart';
 import 'package:simpannow/core/services/theme_service.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserService()),
         ChangeNotifierProvider(create: (_) => TransactionService()),
         ChangeNotifierProvider(create: (_) => AccountService()), // NEW: Account service
+        ChangeNotifierProvider(create: (_) => MonthlySummaryService()), // NEW: Monthly summary service
         ChangeNotifierProvider(create: (_) => ThemeNotifier()),
       ],
       child: Consumer<ThemeNotifier>(

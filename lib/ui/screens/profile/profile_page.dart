@@ -138,7 +138,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         icon: Icon(
-                          FontAwesomeIcons.save,
+                          FontAwesomeIcons.floppyDisk,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         label: Text(

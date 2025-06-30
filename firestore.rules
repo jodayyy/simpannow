@@ -17,6 +17,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Allow users to manage their monthly summaries
+    match /users/{userId}/monthly_summaries/{monthlyId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     // Default deny
     match /{document=**} {
       allow read, write: if false;

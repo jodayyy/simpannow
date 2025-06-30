@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:simpannow/data/models/transaction_model.dart' as models;
 import 'package:simpannow/data/models/financial_summary_model.dart';
+import 'package:simpannow/data/models/account_model.dart' as models;
 
 class TransactionService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -37,12 +38,10 @@ class TransactionService with ChangeNotifier {
       final userDoc = await userDocRef.get();
       
       if (!userDoc.exists) {
-        debugPrint('User document does not exist, creating it...');
         await userDocRef.set({
           'email': '', // Will be updated by user service
           'createdAt': FieldValue.serverTimestamp(),
         });
-        debugPrint('User document created successfully');
       }
 
       final docRef = _firestore
@@ -51,8 +50,6 @@ class TransactionService with ChangeNotifier {
           .collection('transactions')
           .doc();
 
-      debugPrint('Firestore Path: users/${transaction.userId}/transactions/${docRef.id}');
-      debugPrint('Transaction Data: ${transaction.toMap()}');
       final transactionWithId = transaction.copyWith(id: docRef.id);
       await docRef.set(transactionWithId.toMap());
 
@@ -67,7 +64,6 @@ class TransactionService with ChangeNotifier {
     } catch (e) {
       _isLoading = false;
       _errorMessage = "Failed to add transaction: $e";
-      debugPrint('Error: $e');
       notifyListeners();
       return false;
     }
@@ -89,8 +85,9 @@ class TransactionService with ChangeNotifier {
   }
 
   // Get financial summary
-  FinancialSummary getFinancialSummary(List<models.Transaction> transactions) {
-    return FinancialSummary.fromTransactions(transactions);
+  FinancialSummary getFinancialSummary(List<models.Transaction> transactions, List<models.Account> accounts) {
+    final currentNetWorth = accounts.fold(0.0, (sum, account) => sum + account.balance);
+    return FinancialSummary.fromTransactions(transactions, currentNetWorth);
   }
 
   // Delete a transaction

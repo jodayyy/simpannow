@@ -36,8 +36,8 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer3<UserService, AuthService, TransactionService>(
-      builder: (context, userService, authService, transactionService, _) {
+    return Consumer4<UserService, AuthService, TransactionService, AccountService>(
+      builder: (context, userService, authService, transactionService, accountService, _) {
         if (authService.user == null) {
           return const Scaffold(
             body: Center(child: Text('Please log in')),

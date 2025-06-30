@@ -216,7 +216,7 @@ class _FinancialSummaryCardState extends State<FinancialSummaryCard> {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
+                          color: Colors.grey[600],
                         ),
                         textAlign: TextAlign.center,
                       ),

@@ -48,16 +48,30 @@ class _SummaryPageState extends State<SummaryPage> {
     final monthlySummaryService = Provider.of<MonthlySummaryService>(context, listen: false);
     
     if (authService.user != null) {
-      // Get current transactions and accounts
-      final transactions = transactionService.transactions;
-      final accounts = accountService.accounts;
+      // Wait for data to be loaded from streams
+      List<Transaction>? transactions;
+      List<Account>? accounts;
       
-      // Check if we need to update monthly data
-      await monthlySummaryService.checkAndSaveMonthlyData(
-        authService.user!.uid,
-        transactions,
-        accounts,
-      );
+      // Get transaction data
+      await for (final transactionData in transactionService.getUserTransactionsStream(authService.user!.uid)) {
+        transactions = transactionData;
+        break; // Take first emission
+      }
+      
+      // Get account data
+      await for (final accountData in accountService.getUserAccountsStream(authService.user!.uid)) {
+        accounts = accountData;
+        break; // Take first emission
+      }
+      
+      if (transactions != null && accounts != null) {
+        // Check and capture all missing monthly data
+        await monthlySummaryService.checkAndCaptureAllMissingMonths(
+          authService.user!.uid,
+          transactions,
+          accounts,
+        );
+      }
     }
   }
 

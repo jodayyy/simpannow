@@ -7,6 +7,8 @@ class MonthlyNetFlow {
   final String monthName;
   final double netFlow;
   final double netWorthChangePercentage;
+  final double netWorthAtEndOfMonth;
+  final double netWorthGrowthPercentage;
   final DateTime capturedAt;
 
   MonthlyNetFlow({
@@ -15,6 +17,8 @@ class MonthlyNetFlow {
     required this.monthName,
     required this.netFlow,
     required this.netWorthChangePercentage,
+    required this.netWorthAtEndOfMonth,
+    required this.netWorthGrowthPercentage,
     required this.capturedAt,
   });
 
@@ -25,6 +29,9 @@ class MonthlyNetFlow {
       monthName: map['monthName'] ?? '',
       netFlow: (map['netFlow'] ?? 0.0).toDouble(),
       netWorthChangePercentage: (map['netWorthChangePercentage'] ?? 0.0).toDouble(),
+      netWorthAtEndOfMonth: (map['netWorthAtEndOfMonth'] ?? 0.0).toDouble(),
+      // Handle missing field for backward compatibility
+      netWorthGrowthPercentage: (map['netWorthGrowthPercentage'] ?? 0.0).toDouble(),
       capturedAt: (map['capturedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
@@ -36,6 +43,8 @@ class MonthlyNetFlow {
       'monthName': monthName,
       'netFlow': netFlow,
       'netWorthChangePercentage': netWorthChangePercentage,
+      'netWorthAtEndOfMonth': netWorthAtEndOfMonth,
+      'netWorthGrowthPercentage': netWorthGrowthPercentage,
       'capturedAt': Timestamp.fromDate(capturedAt),
     };
   }
@@ -76,10 +85,11 @@ class FinancialSummary {
     
     final balance = income - expenses;
     
-    // Calculate growth percentage based on current net worth
-    // This shows what percentage of current net worth the month's net flow represents
-    final growthPercentage = currentNetWorth != 0 
-        ? (balance / currentNetWorth) * 100 
+    // Calculate growth percentage based on starting net worth of the month
+    // Starting net worth = current net worth - current month's net flow
+    final startingNetWorth = currentNetWorth - balance;
+    final growthPercentage = startingNetWorth != 0 
+        ? (balance / startingNetWorth) * 100 
         : (balance != 0 ? 100.0 : 0.0);
     
     // Get recent transactions (last 10, sorted by date)

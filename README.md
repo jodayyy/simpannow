@@ -4,7 +4,7 @@ A sophisticated personal financial management application built with Flutter, fe
 
 ## 🚀 Overview
 
-SimpanNow transforms personal finance management with **smart monthly summaries**, **historical reconstruction**, and **intelligent growth tracking**. The app automatically captures your financial journey, providing deep insights into spending patterns, wealth growth, and financial health trends.
+SimpanNow transforms personal finance management with **monthly summaries**, **account management**, and **growth tracking** and many more. The app automatically captures your financial journey, providing deep insights into spending patterns, wealth growth, and financial health trends.
 
 ## 📈 Advanced Features
 
@@ -31,7 +31,6 @@ SimpanNow transforms personal finance management with **smart monthly summaries*
 - **Visual Progress Indicators**: Color-coded bars showing income vs expense ratios
 - **Expandable Historical Trends**: Month-by-month analysis with detailed breakdowns
 - **Interactive Legend System**: Built-in help dialogs explaining all metrics and calculations
-- **Smart Percentage Displays**: Two decimal precision for accurate financial tracking
 
 - **User Profile Management**
 ### User Experience Excellence ✨
@@ -39,7 +38,6 @@ SimpanNow transforms personal finance management with **smart monthly summaries*
 - **Responsive Design**: Optimized for web and mobile with smooth transitions
 - **Dark/Light Mode Support**: Seamless theme switching with user preference persistence
 - **Intuitive Navigation**: Drawer and tab-based interface with logical information hierarchy
-- **Smart Loading States**: Comprehensive error handling and user feedback throughout the app
 - **Modern Material Design 3**: Beautiful, accessible UI following Google's latest design principles
 
 ## 📊 Understanding Your Financial Data
@@ -201,7 +199,6 @@ lib/
 - Users can only access their own data
 - Authentication required for all operations
 - Transaction and account data is isolated per user
-- Monthly summaries are automatically generated
 
 ## Upcoming Features 🚀
 - **Advanced Analytics**

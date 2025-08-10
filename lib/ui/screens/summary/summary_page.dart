@@ -10,7 +10,6 @@ import 'package:simpannow/ui/components/navigation/top_bar.dart';
 import 'package:simpannow/ui/features/summaries/financial_summary_card.dart';
 import 'package:simpannow/ui/features/summaries/account_overview_card.dart';
 import 'package:simpannow/ui/features/transactions/transaction_card_group.dart';
-import 'package:simpannow/ui/features/transactions/add_transaction_dialog.dart';
 import 'package:simpannow/ui/features/transactions/delete_transaction_dialog.dart';
 import 'package:simpannow/ui/screens/transactions/transactions_page.dart';
 import 'package:simpannow/data/models/transaction_model.dart';
@@ -276,35 +275,8 @@ class _SummaryPageState extends State<SummaryPage> {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showAddTransactionDialog(context),
-            tooltip: 'Add Transaction',
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-                width: 1,
-              ),
-            ),
-            icon: Icon(
-              FontAwesomeIcons.plus,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            label: Text(
-              'Add Transaction',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-          ),
         );
       },
-    );
-  }
-
-  void _showAddTransactionDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => const AddTransactionDialog(),
     );
   }
 }

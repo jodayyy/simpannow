@@ -26,10 +26,13 @@ class TransactionListItem extends StatelessWidget {
     final isIncome = transaction.type == TransactionType.INCOME;
     final color = isIncome ? Colors.green : Colors.red;
     final sign = isIncome ? '+' : '-';
+    // Disable editing for transfer (from/to) and transfer fee entries
+    final bool isTransfer = transaction.category == 'Transfer' || (transaction.isTransferFee == true);
 
     final listTileContent = Dismissible(
       key: Key(transaction.id),
-      direction: DismissDirection.horizontal,
+      // Only allow swipe left (delete) for transfer-related transactions
+      direction: isTransfer ? DismissDirection.endToStart : DismissDirection.horizontal,
       background: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -69,6 +72,12 @@ class TransactionListItem extends StatelessWidget {
           );
         } else if (direction == DismissDirection.startToEnd) {
           // Edit transaction (swipe right)
+          if (isTransfer) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Editing transfer transactions is disabled')),
+            );
+            return false;
+          }
           showDialog(
             context: context,
             builder: (context) => EditTransactionDialog(transaction: transaction),

@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:simpannow/data/models/transaction_model.dart' as models;
 import 'package:simpannow/data/models/financial_summary_model.dart';
 import 'package:simpannow/data/models/account_model.dart' as models;
+import 'package:simpannow/core/services/transfer_service.dart';
 
 class TransactionService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    List<models.Transaction> _transactions = [];
+  List<models.Transaction> _transactions = [];
   bool _isLoading = false;
   String? _errorMessage;
 
@@ -25,6 +26,7 @@ class TransactionService with ChangeNotifier {
     'Work': '💼',
     'Bills': '💳',
     'Other': '📝',
+    'Transfer': '🔁',
   };
   // Add a new transaction
   Future<bool> addTransaction(models.Transaction transaction) async {
@@ -105,12 +107,34 @@ class TransactionService with ChangeNotifier {
           .doc(transactionId)
           .get();
 
-      models.Transaction? transaction;
-      if (transactionDoc.exists) {
-        transaction = models.Transaction.fromMap(transactionDoc.data()!);
+      if (!transactionDoc.exists) {
+        _isLoading = false;
+        notifyListeners();
+        return false;
       }
 
-      // Delete the transaction
+      final transaction = models.Transaction.fromMap(transactionDoc.data()!);
+
+      // If it's a transfer fee, only delete the fee and revert its effect
+      if (transaction.isTransferFee == true) {
+        await TransferService().deleteTransferFeeByTransactionId(
+          userId: userId,
+          feeTransactionId: transactionId,
+        );
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+
+      // If it's part of a transfer group (from/to), delete the whole group atomically
+      if ((transaction.transferGroupId ?? '').isNotEmpty || transaction.category == 'Transfer') {
+        await TransferService().deleteTransferByTransactionId(userId: userId, transactionId: transactionId);
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+
+      // Otherwise, normal single-transaction delete
       await _firestore
           .collection('users')
           .doc(userId)
@@ -119,7 +143,7 @@ class TransactionService with ChangeNotifier {
           .delete();
 
       // Update account balance if transaction was linked to an account
-      if (transaction != null && transaction.accountId != null && transaction.accountId!.isNotEmpty) {
+      if (transaction.accountId != null && transaction.accountId!.isNotEmpty) {
         await _revertAccountBalance(transaction);
       }
 
@@ -141,6 +165,14 @@ class TransactionService with ChangeNotifier {
     notifyListeners();
 
     try {
+      // If either the original or the updated is part of a transfer, update both sides via TransferService
+      if ((originalTransaction.transferGroupId ?? '').isNotEmpty || (updatedTransaction.transferGroupId ?? '').isNotEmpty || originalTransaction.category == 'Transfer' || updatedTransaction.category == 'Transfer') {
+        await TransferService().updateTransferByTransaction(userId: userId, updatedTransaction: updatedTransaction);
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+
       // Update the transaction in Firestore
       await _firestore
           .collection('users')

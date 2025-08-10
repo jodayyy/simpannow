@@ -69,10 +69,11 @@ class FinancialSummary {
     final now = DateTime.now();
     final currentMonthStart = DateTime(now.year, now.month, 1);
     
-    // Only include current month transactions
+    // Only include current month transactions, and exclude transfers
     final currentMonthTransactions = transactions.where((t) => 
       t.createdAt.isAfter(currentMonthStart.subtract(const Duration(seconds: 1))) &&
-      t.createdAt.isBefore(DateTime(now.year, now.month + 1, 1))
+      t.createdAt.isBefore(DateTime(now.year, now.month + 1, 1)) &&
+      t.category != 'Transfer'
     );
     
     final income = currentMonthTransactions
@@ -92,8 +93,9 @@ class FinancialSummary {
         ? (balance / startingNetWorth) * 100 
         : (balance != 0 ? 100.0 : 0.0);
     
-    // Get recent transactions (last 10, sorted by date)
+    // Get recent transactions (last 10, sorted by date), excluding transfers
     final recentTransactions = List<Transaction>.from(transactions)
+      ..removeWhere((t) => t.category == 'Transfer')
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt))
       ..take(10);
 

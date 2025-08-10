@@ -12,6 +12,10 @@ class Transaction {
   final DateTime createdAt;
   final String? description;
   final String? accountId; // NEW: Optional account reference
+  // Linkage for transfers
+  final String? transferGroupId; // Same for both sides (and optional fee)
+  final String? linkedTransactionId; // The counterpart transaction id
+  final bool isTransferFee; // true if this is the optional fee record in the group
 
   Transaction({
     required this.id,
@@ -23,6 +27,9 @@ class Transaction {
     required this.createdAt,
     this.description,
     this.accountId, // NEW: Optional account reference
+    this.transferGroupId,
+    this.linkedTransactionId,
+    this.isTransferFee = false,
   });
 
   factory Transaction.fromMap(Map<String, dynamic> map) {
@@ -39,6 +46,9 @@ class Transaction {
       createdAt: (map['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       description: map['description'],
       accountId: map['accountId'], // NEW: Optional account reference
+      transferGroupId: map['transferGroupId'],
+      linkedTransactionId: map['linkedTransactionId'],
+      isTransferFee: (map['isTransferFee'] ?? false) == true,
     );
   }
 
@@ -53,6 +63,9 @@ class Transaction {
       'createdAt': Timestamp.fromDate(createdAt),
       'description': description,
       'accountId': accountId, // NEW: Optional account reference
+      'transferGroupId': transferGroupId,
+      'linkedTransactionId': linkedTransactionId,
+      'isTransferFee': isTransferFee,
     };
   }
 
@@ -66,6 +79,9 @@ class Transaction {
     DateTime? createdAt,
     String? description,
     String? accountId, // NEW: Optional account reference
+    String? transferGroupId,
+    String? linkedTransactionId,
+    bool? isTransferFee,
   }) {
     return Transaction(
       id: id ?? this.id,
@@ -77,6 +93,9 @@ class Transaction {
       createdAt: createdAt ?? this.createdAt,
       description: description ?? this.description,
       accountId: accountId ?? this.accountId, // NEW: Optional account reference
+      transferGroupId: transferGroupId ?? this.transferGroupId,
+      linkedTransactionId: linkedTransactionId ?? this.linkedTransactionId,
+      isTransferFee: isTransferFee ?? this.isTransferFee,
     );
   }
 }

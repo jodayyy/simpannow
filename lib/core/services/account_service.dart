@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:simpannow/data/models/account_model.dart';
+import 'package:simpannow/core/services/transfer_service.dart';
 
 class AccountService with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -90,7 +91,7 @@ class AccountService with ChangeNotifier {
     notifyListeners();
 
     try {
-      // Delete all transactions linked to this account
+      // Find all transactions linked to this account
       final transactionsSnapshot = await _firestore
           .collection('users')
           .doc(userId)
@@ -98,12 +99,43 @@ class AccountService with ChangeNotifier {
           .where('accountId', isEqualTo: accountId)
           .get();
 
-      // Delete each linked transaction
-      for (var doc in transactionsSnapshot.docs) {
+      // Keep track of processed transfer groups to avoid double-deletes
+      final processedTransferGroups = <String>{};
+      final transferService = TransferService();
+
+      for (final doc in transactionsSnapshot.docs) {
+        final data = doc.data();
+        final String groupId = (data['transferGroupId'] ?? '').toString();
+        final String category = (data['category'] ?? '').toString();
+        final bool isTransfer = category == 'Transfer' && groupId.isNotEmpty;
+        final bool isTransferFee = (data['isTransferFee'] ?? false) == true;
+
+        if (isTransfer) {
+          // Delete the whole transfer group (both sides and optional fee) once
+          if (!processedTransferGroups.contains(groupId)) {
+            await transferService.deleteTransferByTransactionId(
+              userId: userId,
+              transactionId: doc.id,
+            );
+            processedTransferGroups.add(groupId);
+          }
+          continue;
+        }
+
+        // Skip fee docs here because they will be deleted together with the group
+        if (isTransferFee) {
+          // In practice, fee belongs to the from-account and will be removed when the group is deleted.
+          // If somehow only a fee doc exists for this account without a visible transfer doc in the query,
+          // you could uncomment the following to delete it standalone:
+          // await transferService.deleteTransferFeeByTransactionId(userId: userId, feeTransactionId: doc.id);
+          continue;
+        }
+
+        // Regular (non-transfer) transaction: delete the doc
         await doc.reference.delete();
       }
 
-      // Delete the account
+      // Finally, delete the account document itself
       await _firestore
           .collection('users')
           .doc(userId)

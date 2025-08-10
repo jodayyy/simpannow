@@ -25,6 +25,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
   String _selectedCategory = 'All';
   String _selectedAccount = 'All'; // NEW: Account filter
   String _sortBy = 'Date (Newest)';
+  
+  // Show-all toggle: by default show only first 50
+  bool _showAll = false;
 
   final List<String> _filterOptions = ['All', 'Income', 'Expense'];
   final List<String> _sortOptions = [
@@ -209,23 +212,42 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         );
                       }
 
+                      // Apply 50-limit by default, with a Show all toggle
+                      final total = filteredTransactions.length;
+                      final isLimited = !_showAll && total > 50;
+                      final visibleTransactions = isLimited
+                          ? filteredTransactions.take(50).toList()
+                          : filteredTransactions;
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Transaction count
+                          // Transaction count + Show all toggle
                           Padding(
                             padding: const EdgeInsets.only(bottom: 12.0),
-                            child: Text(
-                              '${filteredTransactions.length} Transaction${filteredTransactions.length == 1 ? '' : 's'} Found',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  isLimited
+                                      ? 'Showing ${visibleTransactions.length} of $total Transactions'
+                                      : '$total Transaction${total == 1 ? '' : 's'} Found',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                if (total > 50)
+                                  TextButton(
+                                    onPressed: () => setState(() => _showAll = !_showAll),
+                                    child: Text(isLimited ? 'Show all' : 'Show first 50'),
+                                  ),
+                              ],
                             ),
                           ),
-                          // Single card for all transactions
+                          // Single card for visible transactions
                           TransactionCardGroup(
-                            transactions: filteredTransactions,
+                            transactions: visibleTransactions,
                             onDelete: (transactionId, transactionTitle) => deleteTransaction(
                               context,
                               transactionService,
@@ -244,24 +266,19 @@ class _TransactionsPageState extends State<TransactionsPage> {
               ),
             ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
+          floatingActionButton: FloatingActionButton(
             onPressed: () => _showAddTransactionDialog(context),
             tooltip: 'Add Transaction',
             backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            shape: CircleBorder(
               side: BorderSide(
                 color: Theme.of(context).colorScheme.primary,
                 width: 1,
               ),
             ),
-            icon: Icon(
+            child: Icon(
               FontAwesomeIcons.plus,
               color: Theme.of(context).colorScheme.onSurface,
-            ),
-            label: Text(
-              'Add Transaction',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
         );

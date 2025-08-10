@@ -10,6 +10,7 @@ import 'package:simpannow/data/models/account_model.dart';
 import 'package:simpannow/ui/features/accounts/add_account_dialog.dart';
 import 'package:simpannow/ui/features/accounts/delete_account_dialog.dart';
 import 'package:simpannow/ui/features/accounts/edit_account_dialog.dart';
+import 'package:simpannow/ui/features/transfers/transfer_dialog.dart';
 
 class AccountsPage extends StatefulWidget {
   const AccountsPage({super.key});
@@ -160,25 +161,50 @@ class _AccountsPageState extends State<AccountsPage> {
               ),
             ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showAddAccountDialog(context),
-            tooltip: 'Add Account',
-            backgroundColor: Theme.of(context).colorScheme.surface,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.primary,
-                width: 1,
+          floatingActionButton: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Transfer FAB (left)
+              FloatingActionButton(
+                heroTag: 'transferFab',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => const TransferDialog(),
+                  );
+                },
+                tooltip: 'Transfer',
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  FontAwesomeIcons.rightLeft,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
-            ),
-            icon: Icon(
-              FontAwesomeIcons.plus,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-            label: Text(
-              'Add Account',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
+              const SizedBox(width: 12),
+              // Add Account FAB (right)
+              FloatingActionButton(
+                heroTag: 'addAccountFab',
+                onPressed: () => _showAddAccountDialog(context),
+                tooltip: 'Add Account',
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 1,
+                  ),
+                ),
+                child: Icon(
+                  FontAwesomeIcons.plus,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         );
       },

@@ -58,322 +58,299 @@ class _EditTransactionDialogState extends State<EditTransactionDialog> {
     
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  const Icon(FontAwesomeIcons.penToSquare),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Edit Transaction',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(FontAwesomeIcons.xmark),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              
-              // Transaction Type Toggle
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 400,
+          maxHeight: MediaQuery.of(context).size.height * 0.9, // Max 90% of screen height
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _selectedType = TransactionType.INCOME),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: _selectedType == TransactionType.INCOME 
-                                ? Colors.green 
-                                : Colors.transparent,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              bottomLeft: Radius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.plus,
-                                color: _selectedType == TransactionType.INCOME 
-                                    ? Colors.white 
-                                    : Colors.green,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Income',
-                                style: TextStyle(
-                                  color: _selectedType == TransactionType.INCOME 
-                                      ? Colors.white 
-                                      : Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                    const Icon(FontAwesomeIcons.penToSquare),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Edit Transaction',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => setState(() => _selectedType = TransactionType.EXPENSE),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: _selectedType == TransactionType.EXPENSE 
-                                ? Colors.red 
-                                : Colors.transparent,
-                            borderRadius: const BorderRadius.only(
-                              topRight: Radius.circular(8),
-                              bottomRight: Radius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FontAwesomeIcons.minus,
-                                color: _selectedType == TransactionType.EXPENSE 
-                                    ? Colors.white 
-                                    : Colors.red,
-                                size: 16,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Expense',
-                                style: TextStyle(
-                                  color: _selectedType == TransactionType.EXPENSE 
-                                      ? Colors.white 
-                                      : Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(FontAwesomeIcons.xmark),
                     ),
                   ],
                 ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Title field
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(
+                const SizedBox(height: 20),
+                
+                // Transaction Type Toggle
+                Container(
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
-                  ),
-                  prefixIcon: const Icon(FontAwesomeIcons.tag),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter a title';
-                  }
-                  return null;
-                },
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Amount field
-              TextFormField(
-                controller: _amountController,
-                decoration: InputDecoration(
-                  labelText: 'Amount (RM)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  prefixIcon: const Icon(FontAwesomeIcons.dollarSign),
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                ],
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter an amount';
-                  }
-                  final amount = double.tryParse(value);
-                  if (amount == null || amount <= 0) {
-                    return 'Please enter a valid amount';
-                  }
-                  return null;
-                },
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Category dropdown
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                decoration: InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  prefixIcon: const Icon(FontAwesomeIcons.list),
-                ),
-                items: TransactionService.categories.keys.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Row(
-                      children: [
-                        Text(
-                          TransactionService.categories[category] ?? '📝',
-                          style: const TextStyle(fontSize: 18),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(category),
-                      ],
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 1,
                     ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() => _selectedCategory = value);
-                  }
-                },
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Account dropdown
-              StreamBuilder<List<Account>>(
-                stream: accountService.getUserAccountsStream(
-                  Provider.of<AuthService>(context, listen: false).user!.uid,
-                ),
-                builder: (context, snapshot) {
-                  final accounts = snapshot.data ?? [];
-                  
-                  return DropdownButtonFormField<String?>(
-                    value: _selectedAccountId,
-                    decoration: InputDecoration(
-                      labelText: 'Account (Optional)',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      prefixIcon: const Icon(FontAwesomeIcons.piggyBank),
-                    ),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Row(
-                          children: [
-                            Text('📝', style: TextStyle(fontSize: 18)),
-                            SizedBox(width: 8),
-                            Text('General (No Account)'),
-                          ],
-                        ),
-                      ),
-                      ...accounts.map((account) {
-                        return DropdownMenuItem<String?>(
-                          value: account.id,
-                          child: Row(
-                            children: [
-                              Text(
-                                Account.getTypeIcon(account.type),
-                                style: const TextStyle(fontSize: 18),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedType = TransactionType.INCOME),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _selectedType == TransactionType.INCOME 
+                                  ? Colors.green 
+                                  : Colors.transparent,
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                bottomLeft: Radius.circular(8),
                               ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  '${account.name} (${account.type})',
-                                  overflow: TextOverflow.ellipsis,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.arrowTrendUp,
+                                  color: _selectedType == TransactionType.INCOME 
+                                      ? Colors.white 
+                                      : Colors.green,
+                                  size: 16,
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _selectedAccountId = value);
-                    },
-                  );
-                },
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Description field
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Description (Optional)',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  prefixIcon: const Icon(FontAwesomeIcons.noteSticky),
-                ),
-                maxLines: 3,
-                maxLength: 200,
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Update button
-              ElevatedButton(
-                onPressed: _isLoading ? null : _updateTransaction,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      )
-                    : const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(FontAwesomeIcons.floppyDisk),
-                          SizedBox(width: 8),
-                          Text(
-                            'Update Transaction',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Income',
+                                  style: TextStyle(
+                                    color: _selectedType == TransactionType.INCOME 
+                                        ? Colors.white 
+                                        : Colors.green,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _selectedType = TransactionType.EXPENSE),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: _selectedType == TransactionType.EXPENSE 
+                                  ? Colors.red 
+                                  : Colors.transparent,
+                              borderRadius: const BorderRadius.only(
+                                topRight: Radius.circular(8),
+                                bottomRight: Radius.circular(8),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.arrowTrendDown,
+                                  color: _selectedType == TransactionType.EXPENSE 
+                                      ? Colors.white 
+                                      : Colors.red,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Expense',
+                                  style: TextStyle(
+                                    color: _selectedType == TransactionType.EXPENSE 
+                                        ? Colors.white 
+                                        : Colors.red,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Title field
+                TextFormField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Title',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a title';
+                    }
+                    return null;
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Amount field
+                TextFormField(
+                  controller: _amountController,
+                  decoration: const InputDecoration(
+                    labelText: 'Amount',
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter an amount';
+                    }
+                    final amount = double.tryParse(value);
+                    if (amount == null || amount <= 0) {
+                      return 'Please enter a valid amount';
+                    }
+                    return null;
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Category dropdown
+                DropdownButtonFormField<String>(
+                  value: _selectedCategory,
+                  decoration: const InputDecoration(
+                    labelText: 'Category',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: TransactionService.categories.keys.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Row(
+                        children: [
+                          Text(
+                            TransactionService.categories[category] ?? '📝',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(category),
                         ],
                       ),
-              ),
-            ],
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => _selectedCategory = value);
+                    }
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Account dropdown
+                StreamBuilder<List<Account>>(
+                  stream: accountService.getUserAccountsStream(
+                    Provider.of<AuthService>(context, listen: false).user!.uid,
+                  ),
+                  builder: (context, snapshot) {
+                    final accounts = snapshot.data ?? [];
+                    
+                    return DropdownButtonFormField<String?>(
+                      value: _selectedAccountId,
+                      decoration: const InputDecoration(
+                        labelText: 'Account (Optional)',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        const DropdownMenuItem<String?>(
+                          value: null,
+                          child: Row(
+                            children: [
+                              Text('💰', style: TextStyle(fontSize: 20)),
+                              SizedBox(width: 8),
+                              Text('General (No Account)'),
+                            ],
+                          ),
+                        ),
+                        ...accounts.map((account) {
+                          return DropdownMenuItem<String?>(
+                            value: account.id,
+                            child: Row(
+                              children: [
+                                Text(
+                                  Account.getTypeIcon(account.type),
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(account.name),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
+                      onChanged: (value) {
+                        setState(() => _selectedAccountId = value);
+                      },
+                    );
+                  },
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Description field
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (Optional)',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 2,
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // Update button
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _updateTransaction,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 1,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(
+                          'Update Transaction',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

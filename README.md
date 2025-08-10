@@ -1,5 +1,3 @@
-
-
 # SimpanNow
 
 A simple and intuitive personal finance management app built with Flutter and Firebase.
@@ -13,6 +11,7 @@ SimpanNow is a comprehensive personal finance tracker designed to help users man
 - **Authentication**: Secure user registration and login with Firebase Auth
 - **Transaction Management**: Add, edit, and delete income/expense transactions
 - **Account Management**: Manage multiple financial accounts (savings, checking, etc.)
+- **Transfer Management**: Seamlessly handle transfers between accounts.
 - **Financial Summary**: Real-time overview of monthly income, expenses, and net flow
 - **Historical Trends**: Track monthly financial data and growth percentages
 - **Dark/Light Theme**: Toggle between dark and light modes
@@ -73,8 +72,9 @@ lib/
 1. **Register/Login**: Create an account or log in with existing credentials
 2. **Add Accounts**: Set up your financial accounts (optional)
 3. **Track Transactions**: Add income and expense transactions
-4. **View Summary**: Monitor your financial overview and trends
-5. **Manage Data**: Edit or delete transactions as needed
+4. **Handle Transfers**: Transfer funds between accounts.
+5. **View Summary**: Monitor your financial overview and trends
+6. **Manage Data**: Edit or delete transactions as needed
 
 ## License
 

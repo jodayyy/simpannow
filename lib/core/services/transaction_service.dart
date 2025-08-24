@@ -26,7 +26,7 @@ class TransactionService with ChangeNotifier {
     'Work': '💼',
     'Bills': '💳',
     'Other': '📝',
-    'Transfer': '🔁',
+    // 'Transfer': '🔁',
   };
   // Add a new transaction
   Future<bool> addTransaction(models.Transaction transaction) async {
